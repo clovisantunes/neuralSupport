@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para Administradores
+model UserAdmin {
+  id    Int    @id @default(autoincrement())
+  nome  String
+  senha String
+
+  // Um ADMIN pode criar várias empresas
+  empresas Empresa[]
+}
+
+// Modelo para Técnicos
+model UserTecnico {
+  id    Int    @id @default(autoincrement())
+  nome  String
+  senha String
+
+  // Técnicos estão vinculados à empresa administradora
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  // Técnicos podem atender chamados
+  chamados Chamado[]
+}
+
+// Modelo para Clientes
+model UserCliente {
+  id    Int    @id @default(autoincrement())
+  nome  String
+  senha String
+
+  // Clientes estão vinculados à empresa de clientes
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int
+
+  // Clientes podem abrir chamados
+  chamados Chamado[]
+}
+
+// Modelo para Empresas
+model Empresa {
+  id   Int         @id @default(autoincrement())
+  nome String      @unique
+  tipo EmpresaType // ADMINISTRADORA ou CLIENTES
+
+  // ADMINISTRADORA: Tem um ADMIN e TÉCNICOS
+  administrador   UserAdmin? @relation(fields: [administradorId], references: [id])
+  administradorId Int?
+
+  // TÉCNICOS: Vinculados à empresa administradora
+  tecnicos UserTecnico[]
+
+  // CLIENTES: Vinculados à empresa de clientes
+  clientes UserCliente[]
+
+  // Chamados da empresa
+  chamados Chamado[]
+}
+
+// Modelo para Chamados
+model Chamado {
+  id        Int           @id @default(autoincrement())
+  descricao String
+  status    ChamadoStatus @default(EM_ANALISE)
+
+  // CLIENTE que abriu o chamado
+  cliente   UserCliente @relation(fields: [clienteId], references: [id])
+  clienteId Int
+
+  // TÉCNICO responsável pelo chamado (opcional)
+  tecnico   UserTecnico? @relation(fields: [tecnicoId], references: [id])
+  tecnicoId Int?
+
+  // EMPRESA onde o chamado foi aberto
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+  empresaId Int
+}
+
+// Tipos de Empresa
+enum EmpresaType {
+  ADMINISTRADORA
+  CLIENTES
+}
+
+// Status dos Chamados
+enum ChamadoStatus {
+  EM_ANALISE
+  EM_ANDAMENTO
+  RESOLVIDO
+}
