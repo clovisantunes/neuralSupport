@@ -1,7 +1,7 @@
 import { Controller, Post, Body, HttpStatus, HttpException, Get } from '@nestjs/common';
-import { UserAdminService } from 'src/Services/Clients/userAdmin.service';
+import { UserAdminService } from 'src/Services/Users/UserAdmin/userAdmin.service';
 import { userAdmin } from 'src/Interfaces/AdminUser';
-import { EmpresaType } from '../../Interfaces/EmpresaType';
+import { EmpresaType } from '../../../Interfaces/EmpresaType';
 
 @Controller('userAdmin') 
 export class UserAdminController {

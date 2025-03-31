@@ -1,7 +1,7 @@
 import { userAdmin } from "src/Interfaces/AdminUser";
 import prismaClient from "src/Prisma/Prisma.service";
 import * as bcrypt from 'bcrypt';
-import { EmpresaType } from "../../Interfaces/EmpresaType";
+import { EmpresaType } from "../../../Interfaces/EmpresaType";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
